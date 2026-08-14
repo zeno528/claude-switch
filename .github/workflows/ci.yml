@@ -2,8 +2,22 @@ name: CI
 
 on:
   pull_request:
+    paths:
+      - 'cswitch'
+      - 'install.sh'
+      - 'lib/**'
+      - 'tests/**'
+      - 'VERSION'
+      - '.github/**'
   push:
     branches: [main]
+    paths:
+      - 'cswitch'
+      - 'install.sh'
+      - 'lib/**'
+      - 'tests/**'
+      - 'VERSION'
+      - '.github/**'
 
 permissions:
   contents: read

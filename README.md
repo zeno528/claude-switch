@@ -90,13 +90,7 @@ cd cswitch
 
 ## 反馈与建议
 
-欢迎通过 [GitHub Issues](https://github.com/zeno528/cswitch/issues) 提交 bug 反馈、功能建议或使用疑问。
-
-提 bug 时请附上：
-
-- 系统环境（Linux / macOS / WSL2）
-- `cswitch version` 与 `claude --version` 的输出
-- 复现步骤和完整报错信息
+有问题或建议？欢迎到 [GitHub Issues](https://github.com/zeno528/cswitch/issues) 提。
 
 ## License
 
