@@ -1,8 +1,8 @@
 <h1 align="center" style="color:#3faec2;font-weight:bold">cswitch</h1>
 
 <p align="center">
-  <img alt="版本" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fzeno528%2Fcswitch%2Fmain%2FVERSION">
-  <img alt="平台" src="https://img.shields.io/badge/平台-Linux%20%7C%20WSL2-blue">
+  <img alt="Version" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fzeno528%2Fcswitch%2Fmain%2FVERSION">
+  <img alt="Platform" src="https://img.shields.io/badge/Platform-Linux%20%7C%20WSL2-blue">
   <img alt="Shell" src="https://img.shields.io/badge/Shell-Bash-89e051">
 </p>
 

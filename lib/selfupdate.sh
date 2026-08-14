@@ -78,7 +78,7 @@ cmd_update() {
 
 cmd_uninstall() {
     local ans
-    read -p "确认卸载 cswitch？(y/N): " ans
+    read -p "     确认卸载 cswitch？(y/N): " ans
     [[ "$ans" == "y" || "$ans" == "Y" ]] || {
         say "" "已取消"
         return
