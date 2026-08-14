@@ -1,4 +1,8 @@
-<h1 align="center" style="color:#3faec2;font-weight:bold">cswitch</h1>
+<p align="center" style="margin-bottom:0">
+  <img src="assets/icon.png" width="120" style="margin-bottom:-24px" alt="cswitch">
+</p>
+
+<h1 align="center" style="color:#3faec2;font-weight:bold;margin-top:0">cswitch</h1>
 
 <p align="center">
   <img alt="Version" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fzeno528%2Fcswitch%2Fmain%2FVERSION">
