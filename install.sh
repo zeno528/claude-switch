@@ -4,7 +4,6 @@
 set -euo pipefail
 
 REPO="${CSWITCH_REPO:-zeno528/cswitch}"
-RAW_BASE="${CSWITCH_RAW_BASE:-https://raw.githubusercontent.com/$REPO/main}"
 TARBALL_URL="${CSWITCH_TARBALL_URL:-https://codeload.github.com/$REPO/tar.gz/refs/heads/main}"
 
 INSTALL_DIR="${CSWITCH_HOME:-$HOME/.cswitch}"
@@ -28,7 +27,7 @@ chmod +x "$INSTALL_DIR/cswitch"
 mkdir -p "$BIN_DIR"
 ln -sf "$INSTALL_DIR/cswitch" "$BIN_DIR/cswitch"
 
-version="$(cat "$INSTALL_DIR/VERSION")"
+version="$(python3 -c "import json;print(json.load(open('$INSTALL_DIR/VERSION'))['message'])" 2>/dev/null || cat "$INSTALL_DIR/VERSION")"
 echo "✅ 已安装 cswitch v$version"
 case ":$PATH:" in
     *":$BIN_DIR:"*) ;;

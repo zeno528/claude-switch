@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 交互菜单：显示当前配置 + profile 列表 + 用量，n/o/g 快捷键
 
 # 交互动作完成后先停下确认，再决定回菜单还是启动 Claude
@@ -17,7 +18,8 @@ show_menu() {
     echo "  \$ $(basename "$0")"
 
     # 当前配置
-    local title_line="${BOLD}${TITLE}cswitch v$(app_version)${NC}"
+    local title_line
+    title_line="${BOLD}${TITLE}cswitch v$(app_version)${NC}"
 
     # 收集 profile（带编号）
     local profile_names=() profile_lines=() profile_gutters=() idx=1
@@ -68,22 +70,22 @@ show_menu() {
 
     # 圆角框（内容左移让位 2 列标记位，边框宽度相应 +2）
     echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
-    box_line "$title_line" $max_w
+    box_line "$title_line" "$max_w"
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
     for idx in "${!profile_lines[@]}"; do
         pline="${profile_lines[$idx]}"
-        box_line "$pline" $max_w "${profile_gutters[$idx]}"
+        box_line "$pline" "$max_w" "${profile_gutters[$idx]}"
         slug="${profile_names[$idx]}"
         u="${SLUG_USAGE[$slug]:-}"
         if [[ -n "$u" ]]; then
-            box_line "    └─ $u" $max_w
+            box_line "    └─ $u" "$max_w"
         else
-            box_line "    └─ 🤖 用量: —" $max_w
+            box_line "    └─ 🤖 用量: —" "$max_w"
         fi
     done
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
-    box_line "直接切换: cswitch <name> [--go]" $max_w
-    box_line "$hint_line" $max_w
+    box_line "直接切换: cswitch <name> [--go]" "$max_w"
+    box_line "$hint_line" "$max_w"
     echo -e "  ${CYAN}╰$(print_dash $((max_w + 8)))╯${NC}"
 
     # 交互选择

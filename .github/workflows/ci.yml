@@ -13,16 +13,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  verify:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v7.0.1
-      - name: 语法检查
-        run: bash -n cswitch install.sh lib/*.sh
-      - name: 版本文件校验
-        run: python3 -c "import json; v=json.load(open('VERSION'))['message']; assert v"
-      - name: 冒烟测试
+      - name: 安装 shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: shellcheck
+        run: shellcheck -x cswitch install.sh lib/*.sh
+      - name: bash 语法检查
+        run: bash -n cswitch install.sh lib/*.sh tests/smoke.sh
+      - name: VERSION 校验（JSON + 语义版本号）
+        run: python3 -c "import json,re; v=json.load(open('VERSION'))['message']; assert re.fullmatch(r'\d+\.\d+\.\d+', v), v"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7.0.1
+      - name: 功能冒烟测试（隔离 HOME）
         run: |
-          ./cswitch version
-          ./cswitch help >/dev/null
+          chmod +x tests/smoke.sh
+          ./tests/smoke.sh

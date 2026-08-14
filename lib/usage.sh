@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 用量查询：DeepSeek / 智谱 / MiniMax
 
 # slug → provider 键名映射

@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+# shellcheck disable=SC2034  # 颜色/路径变量为跨文件共享，被各 lib 模块引用
 # 公共：路径、颜色、宽度/框打印、版本
 
 PROFILES_DIR="$HOME/.claude/model-profiles"

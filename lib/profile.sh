@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # profile：读取、新建配置
 
 # profile 描述统一显示切换后实际生效的模型 id：
@@ -37,7 +38,7 @@ create_new_profile() {
     # 名称：输错当场提示并重试，不浪费后面两步输入；空输入取消
     local profile_file=""
     while true; do
-        read -p "     请输入配置名称: " name
+        read -r -p "     请输入配置名称: " name
 
         # 空输入取消
         if [[ -z "$name" ]]; then
@@ -61,12 +62,12 @@ create_new_profile() {
         break
     done
 
-    read -p "     请输入调用地址: " api_url
-    read -p "     请输入 API Key: " api_token
+    read -r -p "     请输入调用地址: " api_url
+    read -r -p "     请输入 API Key: " api_token
     # 模型 id：回填三个 DEFAULT 字段；留空则跳过，之后手动编辑
-    read -p "     请输入模型 ID（回车跳过）: " model_id
+    read -r -p "     请输入模型 ID（回车跳过）: " model_id
     # 自动压缩窗口：回车默认 1000000（约等于关闭自动压缩）
-    read -p "     自动压缩窗口 Token 数（回车默认 1000000）: " compact_window
+    read -r -p "     自动压缩窗口 Token 数（回车默认 1000000）: " compact_window
     compact_window="${compact_window:-1000000}"
 
     # 生成 JSON

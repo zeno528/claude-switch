@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 核心切换：合并 env 到 settings.json（带备份回滚）、记录状态、成功提示
 
 # do_switch <profile_name> [go_mode] [interactive]
@@ -40,7 +41,7 @@ do_switch() {
     cp "$SETTINGS_FILE" "${SETTINGS_FILE}.bak"
 
     # 用 python3 合并 env 到 settings.json
-    python3 << PYEOF 2>/dev/null
+    if ! python3 << PYEOF 2>/dev/null; then
 import json, os, glob
 
 profile_file = '$profile_file'
@@ -76,8 +77,6 @@ with open(settings_file, 'w') as f:
 
 print(json.dumps(settings['env'], indent=2, ensure_ascii=False))
 PYEOF
-
-    if [[ $? -ne 0 ]]; then
         say "❌" "更新 settings.json 失败，已恢复备份"
         mv "${SETTINGS_FILE}.bak" "$SETTINGS_FILE"
         exit 1
@@ -104,9 +103,9 @@ PYEOF
 
     echo ""
     echo -e "  ${CYAN}╭$(print_dash $((max_w + 6)))╮${NC}"
-    box_line "$success_line" $max_w
+    box_line "$success_line" "$max_w"
     echo -e "  ${CYAN}├$(print_dash $((max_w + 6)))┤${NC}"
-    box_line "$warn_line" $max_w
+    box_line "$warn_line" "$max_w"
     echo -e "  ${CYAN}╰$(print_dash $((max_w + 6)))╯${NC}"
     echo ""
 

@@ -38,6 +38,10 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 | `cswitch update` | 升级到最新版 |
 | `cswitch uninstall` | 卸载 |
 
+<p align="center">
+  <img src="assets/menu.png" alt="cswitch 菜单界面">
+</p>
+
 profile 存放在 `~/.claude/model-profiles/`，切换时把 profile 的 `env` 合并进 `~/.claude/settings.json`（带备份回滚），并记录当前配置到 `~/.claude/.current-model-profile`。
 
 ## 更新机制

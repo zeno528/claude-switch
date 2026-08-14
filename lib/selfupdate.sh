@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 自管理：版本、检查更新、升级、卸载
 
 # 安装软链（安装目录 → ~/.local/bin）
@@ -78,7 +79,7 @@ cmd_update() {
 
 cmd_uninstall() {
     local ans
-    read -p "     确认卸载 cswitch？(y/N): " ans
+    read -r -p "     确认卸载 cswitch？(y/N): " ans
     [[ "$ans" == "y" || "$ans" == "Y" ]] || {
         say "" "已取消"
         return
