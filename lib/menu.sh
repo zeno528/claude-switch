@@ -48,11 +48,12 @@ show_menu() {
     # 擦除进度提示行
     printf "\r\033[2K"
 
-    local hint_line="新建配置：${BOLD}${GREEN}n${NC}  |  打开目录：${BOLD}${GREEN}o${NC}  |  升级：${BOLD}${GREEN}u${NC}  |  Claude 安装/升级：${BOLD}${GREEN}c${NC}  |  卸载：${BOLD}${GREEN}x${NC}"
+    local hint_line1="新建配置：${BOLD}${GREEN}n${NC}  |  打开目录：${BOLD}${GREEN}o${NC}  |  升级：${BOLD}${GREEN}u${NC}  |  卸载：${BOLD}${GREEN}x${NC}"
+    local hint_line2="Claude 安装/升级：${BOLD}${GREEN}c${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
-        "直接切换: cswitch <name> [--go]" "$hint_line")
+        "直接切换: cswitch <name> --go" "$hint_line1" "$hint_line2")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
         w=$(str_width "$clean")
@@ -64,7 +65,7 @@ show_menu() {
 
     # 圆角框（内容左移让位 2 列标记位，边框宽度相应 +2）
     echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
-    box_line "$title_line" "$max_w" "  " center
+    box_line "$title_line" "$max_w"
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
     for idx in "${!profile_lines[@]}"; do
         pline="${profile_lines[$idx]}"
@@ -81,8 +82,9 @@ show_menu() {
         fi
     done
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
-    box_line "直接切换: cswitch <name> [--go]" "$max_w"
-    box_line "$hint_line" "$max_w"
+    box_line "直接切换: cswitch <name> --go" "$max_w"
+    box_line "$hint_line1" "$max_w"
+    box_line "$hint_line2" "$max_w"
     echo -e "  ${CYAN}╰$(print_dash $((max_w + 8)))╯${NC}"
 
     # 交互选择

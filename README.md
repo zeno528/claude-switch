@@ -42,19 +42,23 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 | 命令 | 说明 |
 | --- | --- |
 | `cswitch` | 交互菜单（查看/切换/用量/新建） |
-| `cswitch <name> [--go]` | 切换到 profile，`--go` 切换后启动 Claude |
+| `cswitch <name> --go` | 切换到 profile（不带 `--go` 只切换），加 `--go` 切换后启动 Claude |
 | `cswitch new` | 新建配置向导 |
 | `cswitch version` | 显示版本 |
 | `cswitch check-update` | 检查更新 |
 | `cswitch update` | 升级到最新版 |
-| `cswitch claude` | 安装/更新 Claude Code（`--info` 查看状态，`-f` 强制升级） |
+| `cswitch claude` | 安装/更新 Claude Code（自动检测安装方式：官方安装器 / Homebrew；`--info` 查看状态） |
 | `cswitch uninstall` | 卸载 |
 
 profile 存放在 `~/.claude/model-profiles/`，切换时把 profile 的 `env` 合并进 `~/.claude/settings.json`（带备份回滚），并记录当前配置到 `~/.claude/.current-model-profile`。
 
+**修改配置**：菜单按 `o` 打开配置目录，或直接编辑 `~/.claude/model-profiles/<名称>.json`（如修改 API 地址、Key、模型 ID），保存后下次切换即生效。
+
 ## 更新机制
 
 本地 `VERSION` 文件与 GitHub 远端 `VERSION` 比对，Python 逐段比较版本号；有新版时下载 GitHub codeload tarball，备份旧安装目录后替换，不需要目标机器装 git。
+
+Claude Code 自身的安装与更新走 `cswitch claude`：自动检测当前安装方式（官方安装器 / Homebrew），原生安装用 `claude update`，Homebrew 用 `brew upgrade` 对应 cask。npm 安装已被官方废弃，检测到时会提示迁移到官方安装器。
 
 ## 目录结构
 
@@ -69,7 +73,8 @@ cswitch/
 │   ├── switch.sh        # 核心切换逻辑
 │   ├── usage.sh         # 三家用量查询
 │   ├── menu.sh          # 交互菜单
-│   └── selfupdate.sh    # 检查更新 / 升级 / 卸载
+│   ├── selfupdate.sh    # 脚本检查更新 / 升级 / 卸载
+│   └── claude-upgrade.sh # Claude Code 安装 / 升级（按安装方式分派）
 └── README.md
 ```
 

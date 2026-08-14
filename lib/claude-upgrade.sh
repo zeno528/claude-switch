@@ -10,6 +10,23 @@
 # macOS 无 timeout 命令
 command -v timeout >/dev/null 2>&1 || timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 
+# 检测 Claude Code 安装方式（官方安装器 native / Homebrew brew / npm-已废弃）
+# 依据官方文档: 原生装在 ~/.local/bin，brew 装 /opt/homebrew 或 /usr/local，npm 在全局 node_modules
+claude_install_method() {
+    local bin_path bin_real npm_root
+    bin_path=$(command -v claude 2>/dev/null) || return 1
+    if command -v brew >/dev/null 2>&1; then
+        brew list --cask claude-code >/dev/null 2>&1 && { echo "brew"; return; }
+        brew list --cask claude-code@latest >/dev/null 2>&1 && { echo "brew-latest"; return; }
+    fi
+    if command -v npm >/dev/null 2>&1; then
+        npm_root=$(npm root -g 2>/dev/null)
+        bin_real=$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$bin_path" 2>/dev/null)
+        [[ -n "$npm_root" && "$bin_real" == "$npm_root"* ]] && { echo "npm"; return; }
+    fi
+    echo "native"
+}
+
 cmd_claude_upgrade() {
     local YES_MODE=false INFO_MODE=false SILENT=false FORCE=false arg
     for arg in "$@"; do
@@ -76,6 +93,15 @@ print(sum(2 if unicodedata.east_asian_width(c) in('W','F') else 1 for c in s))
             || echo "unknown"
     }
 
+    install_method_label() {
+        case "$1" in
+            brew) echo "Homebrew (claude-code cask)" ;;
+            brew-latest) echo "Homebrew (claude-code@latest cask)" ;;
+            npm) echo "npm 全局包（已废弃）" ;;
+            *) echo "官方安装器 (~/.local/bin/)" ;;
+        esac
+    }
+
     # ── Info 模式 ──
     if $INFO_MODE; then
         if ! claude_exists; then
@@ -83,11 +109,16 @@ print(sum(2 if unicodedata.east_asian_width(c) in('W','F') else 1 for c in s))
             return 1
         fi
         local_version=$(get_local_version)
+        install_method=$(claude_install_method)
         echo ""
         print_title "  🤖 Claude Code"
         echo -e "  版本    ${GREEN}$local_version${NC}"
         echo -e "  路径    $(command -v claude)"
-        echo -e "  方式    官方安装器 (~/.local/bin/)"
+        echo -e "  方式    $(install_method_label "$install_method")"
+        if [[ "$install_method" == "npm" ]]; then
+            echo -e "  ${YELLOW}⚠️  npm 安装已被官方废弃，建议迁移到官方安装器:${NC}"
+            echo -e "  ${GREEN}    curl -fsSL https://claude.ai/install.sh | bash${NC}"
+        fi
         echo -e "  状态    ${GREEN}✅ 运行正常${NC}"
         return 0
     fi
@@ -119,35 +150,59 @@ print(sum(2 if unicodedata.east_asian_width(c) in('W','F') else 1 for c in s))
         current_version=$(get_local_version)
         $SILENT || print_ok "已安装版本: $current_version 📦"
 
-        $SILENT || print_step "检查最新版本 (GitHub Releases)"
-        latest_version=$(get_latest_version)
+        install_method=$(claude_install_method)
+        $SILENT || print_ok "安装方式: $(install_method_label "$install_method")"
 
-        if [[ "$current_version" == "$latest_version" && "$FORCE" == "false" ]]; then
-            $SILENT || { print_ok "已是最新版本 ($current_version) — 来源: GitHub官方仓库 ✨"; echo ""; print_card "🏷️ Claude Code" 42 "版本" "${GREEN}$current_version${NC}" "状态" "✅ 已是最新 (GitHub Releases)"; }
-            return 0
-        fi
+        # native: 对比 GitHub Releases 决定是否升级；brew: 交给包管理器（cask 有发布滞后，自比较不准确）
+        if [[ "$install_method" == "npm" ]]; then
+            print_fail "npm 安装已被官方废弃，不支持通过 cswitch 升级"
+            print_info "迁移到官方安装器: ${GREEN}curl -fsSL https://claude.ai/install.sh | bash${NC}"
+            return 1
+        elif [[ "$install_method" == "native" ]]; then
+            $SILENT || print_step "检查最新版本 (GitHub Releases)"
+            latest_version=$(get_latest_version)
 
-        if $FORCE; then
-            $SILENT || print_info "⚡ 强制升级模式"
-        fi
+            if [[ "$current_version" == "$latest_version" && "$FORCE" == "false" ]]; then
+                $SILENT || { print_ok "已是最新版本 ($current_version) — 来源: GitHub官方仓库 ✨"; echo ""; print_card "🏷️ Claude Code" 42 "版本" "${GREEN}$current_version${NC}" "状态" "✅ 已是最新 (GitHub Releases)"; }
+                return 0
+            fi
 
-        if [[ "$latest_version" != "unknown" ]]; then
-            $SILENT || echo -e "  🔔 ${CYAN}$current_version${NC} → ${CYAN}$latest_version${NC}"
-        fi
-        $SILENT || echo ""
+            if $FORCE; then
+                $SILENT || print_info "⚡ 强制升级模式"
+            fi
 
-        $SILENT || print_step "确认升级"
-        if $YES_MODE; then
-            confirm="Y"
-            $SILENT || print_ok "自动确认"
+            if [[ "$latest_version" != "unknown" ]]; then
+                $SILENT || echo -e "  🔔 ${CYAN}$current_version${NC} → ${CYAN}$latest_version${NC}"
+            fi
+            $SILENT || echo ""
+
+            $SILENT || print_step "确认升级"
+            if $YES_MODE; then
+                confirm="Y"
+                $SILENT || print_ok "自动确认"
+            else
+                read -rp "  升级 Claude Code？(Y/n,回车默认 Y): " confirm
+                confirm=${confirm:-Y}
+            fi
+            [[ "$confirm" != "Y" && "$confirm" != "y" ]] && { echo -e "  ${YELLOW}已取消${NC}"; return 0; }
+
+            $SILENT || print_step "执行升级"
+            claude update </dev/null >/dev/null 2>&1 || true
         else
-            read -rp "  升级 Claude Code？(Y/n,回车默认 Y): " confirm
-            confirm=${confirm:-Y}
-        fi
-        [[ "$confirm" != "Y" && "$confirm" != "y" ]] && { echo -e "  ${YELLOW}已取消${NC}"; return 0; }
+            # brew：包管理器自行判断是否有新版（幂等，已最新则无操作）
+            $SILENT || print_step "执行升级 ($(install_method_label "$install_method"))"
+            if $YES_MODE; then
+                $SILENT || print_info "⚡ 自动确认"
+            else
+                read -rp "  升级 Claude Code？(Y/n,回车默认 Y): " confirm
+                confirm=${confirm:-Y}
+            fi
+            [[ "$confirm" != "Y" && "$confirm" != "y" ]] && { echo -e "  ${YELLOW}已取消${NC}"; return 0; }
 
-        $SILENT || print_step "执行升级"
-        claude update </dev/null >/dev/null 2>&1 || true
+            local cask="claude-code"
+            [[ "$install_method" == "brew-latest" ]] && cask="claude-code@latest"
+            brew upgrade "$cask"
+        fi
     fi
 
     # ── 验证 ──
