@@ -16,7 +16,7 @@ show_menu() {
     echo "  \$ $(basename "$0")"
 
     # 当前配置
-    local title_line="${BOLD}${YELLOW}claude-switch v$(app_version)${NC}"
+    local title_line="${BOLD}${YELLOW}cswitch v$(app_version)${NC}"
 
     # 收集 profile（带编号）
     local profile_names=() profile_lines=() profile_gutters=() idx=1
@@ -55,7 +55,7 @@ show_menu() {
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
-        "用法: claude-switch <name> [--go]" "示例: claude-switch deepseek --go" "$hint_line")
+        "用法: cswitch <name> [--go]" "示例: cswitch deepseek --go" "$hint_line")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
         w=$(str_width "$clean")
@@ -81,8 +81,8 @@ show_menu() {
         fi
     done
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
-    box_line "用法: claude-switch <name> [--go]" $max_w
-    box_line "示例: claude-switch deepseek --go" $max_w
+    box_line "用法: cswitch <name> [--go]" $max_w
+    box_line "示例: cswitch deepseek --go" $max_w
     box_line "$hint_line" $max_w
     echo -e "  ${CYAN}╰$(print_dash $((max_w + 8)))╯${NC}"
 

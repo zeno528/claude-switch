@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# cswitch — 一键切换 Claude Code 模型配置
+# 用法: cswitch [profile_name] [--go]
+#        cswitch              → 交互菜单
+#        cswitch <name> [--go] → 切换到 profile，--go 切换后启动 claude
+#        cswitch new          → 新建模板向导
+#        cswitch version      → 显示版本
+#        cswitch check-update → 检查更新
+#        cswitch update       → 升级到最新版
+#        cswitch uninstall    → 卸载
+
+# readlink -f 解析软链，保证经 ~/.local/bin 软链调用时 lib/ 定位正确
+APP_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+
+for mod in common profile switch usage menu selfupdate; do
+    source "$APP_DIR/lib/$mod.sh"
+done
+
+show_help() {
+    echo "cswitch v$(app_version) — 一键切换 Claude Code 模型配置"
+    echo ""
+    echo "用法:"
+    echo "  cswitch                   交互菜单（查看/切换/用量/新建）"
+    echo "  cswitch <name> [--go]     切换到 profile，--go 切换后启动 Claude"
+    echo "  cswitch new               新建模板向导"
+    echo "  cswitch version           显示版本"
+    echo "  cswitch check-update      检查更新"
+    echo "  cswitch update            升级到最新版"
+    echo "  cswitch uninstall         卸载"
+}
+
+main() {
+    if [[ $# -eq 0 || "$1" == "--go" ]]; then
+        show_menu
+        return
+    fi
+    case "$1" in
+        version|-v|--version) cmd_version ;;
+        check-update|check) cmd_check_update ;;
+        update|upgrade|self-update) cmd_update ;;
+        uninstall) cmd_uninstall ;;
+        new|create) create_new_profile ;;
+        help|-h|--help) show_help ;;
+        *)
+            local go_mode=false
+            [[ "$2" == "--go" ]] && go_mode=true
+            do_switch "$1" "$go_mode" false
+            ;;
+    esac
+}
+
+main "$@"

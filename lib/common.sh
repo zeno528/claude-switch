@@ -4,13 +4,13 @@ PROFILES_DIR="$HOME/.claude/model-profiles"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 STATE_FILE="$HOME/.claude/.current-model-profile"
 
-INSTALL_DIR="${CLAUDE_SWITCH_HOME:-$HOME/.claude-switch}"
+INSTALL_DIR="${CSWITCH_HOME:-$HOME/.cswitch}"
 BIN_DIR="$HOME/.local/bin"
 
 # GitHub 仓库（建仓后若改名只需改这一处）
-REPO="${CLAUDE_SWITCH_REPO:-zeno528/claude-switch}"
-RAW_BASE="${CLAUDE_SWITCH_RAW_BASE:-https://raw.githubusercontent.com/$REPO/main}"
-TARBALL_URL="${CLAUDE_SWITCH_TARBALL_URL:-https://codeload.github.com/$REPO/tar.gz/refs/heads/main}"
+REPO="${CSWITCH_REPO:-zeno528/cswitch}"
+RAW_BASE="${CSWITCH_RAW_BASE:-https://raw.githubusercontent.com/$REPO/main}"
+TARBALL_URL="${CSWITCH_TARBALL_URL:-https://codeload.github.com/$REPO/tar.gz/refs/heads/main}"
 
 CYAN='\033[36m'
 GREEN='\033[32m'
