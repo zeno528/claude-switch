@@ -17,9 +17,10 @@ show_menu() {
     clear
     echo "  \$ $(basename "$0")"
 
-    # 当前配置
-    local title_line
-    title_line="${BOLD}${TITLE}cswitch v$(app_version)${NC}"
+    # 标题卡内容（嵌入边框左上角 + 版本号行）
+    local ver_line ver_clean
+    ver_line=" 版本  ${GREEN}v$(app_version)${NC}"
+    local title_header="─ 🏷️ cswitch "
 
     # 收集 profile（带编号）
     local profile_names=() profile_lines=() profile_gutters=() idx=1
@@ -52,7 +53,7 @@ show_menu() {
     local hint_line2="Claude 安装/升级：${BOLD}${GREEN}c${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
-    local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
+    local max_w=0 all_lines=("$ver_line" "${profile_lines[@]}" \
         "直接切换: cswitch <name> --go" "$hint_line1" "$hint_line2")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
@@ -63,10 +64,20 @@ show_menu() {
 
     echo ""
 
-    # 圆角框（内容左移让位 2 列标记位，边框宽度相应 +2）
-    echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
-    box_line "$title_line" "$max_w"
+    # 标题卡：╭─ 🏷️ cswitch ──╮ / │ 版本  v1.0.6 │ / ├──┤（标题嵌入左上角）
+    local tw fill ver_pad spaces
+    tw=$((max_w + 12))
+    fill=""
+    for ((i = 0; i < tw - 4 - $(str_width "$title_header"); i++)); do fill+="─"; done
+    echo -e "  ${CYAN}╭${title_header}${fill}╮${NC}"
+    ver_clean=$(echo "$ver_line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
+    ver_pad=$((tw - 6 - $(str_width "$ver_clean")))
+    spaces=""
+    for ((i = 0; i < ver_pad; i++)); do spaces+=" "; done
+    echo -e "  ${CYAN}│${NC} ${ver_line}${spaces} ${CYAN}│${NC}"
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
+
+    # profile 列表
     for idx in "${!profile_lines[@]}"; do
         pline="${profile_lines[$idx]}"
         box_line "$pline" "$max_w" "${profile_gutters[$idx]}"
