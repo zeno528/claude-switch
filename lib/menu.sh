@@ -16,7 +16,7 @@ show_menu() {
     echo "  \$ $(basename "$0")"
 
     # 当前配置
-    local title_line="claude-switch v$(app_version)"
+    local title_line="${BOLD}${YELLOW}claude-switch v$(app_version)${NC}"
     local current_line="⚪ 当前配置: 未知"
     if [[ -f "$STATE_FILE" ]]; then
         current=$(cat "$STATE_FILE")
