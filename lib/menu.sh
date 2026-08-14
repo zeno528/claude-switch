@@ -17,13 +17,6 @@ show_menu() {
 
     # 当前配置
     local title_line="${BOLD}${YELLOW}claude-switch v$(app_version)${NC}"
-    local current_line="⚪ 当前配置: 未知"
-    if [[ -f "$STATE_FILE" ]]; then
-        current=$(cat "$STATE_FILE")
-        pdesc=$(profile_model "$PROFILES_DIR/${current}.json")
-        [[ -z "$pdesc" ]] && pdesc="$current"
-        current_line="🎯 当前配置: ${pdesc} (${current})"
-    fi
 
     # 收集 profile（带编号）
     local profile_names=() profile_lines=() profile_gutters=() idx=1
@@ -61,7 +54,7 @@ show_menu() {
     local hint_line="新建: ${BOLD}${GREEN}n${NC} 创建新模板  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
-    local max_w=0 all_lines=("$title_line" "$current_line" "${profile_lines[@]}" \
+    local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
         "用法: claude-switch <name> [--go]" "示例: claude-switch deepseek --go" "$hint_line")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
@@ -75,7 +68,6 @@ show_menu() {
     # 圆角框（内容左移让位 2 列标记位，边框宽度相应 +2）
     echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
     box_line "$title_line" $max_w
-    box_line "$current_line" $max_w
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
     for idx in "${!profile_lines[@]}"; do
         pline="${profile_lines[$idx]}"
