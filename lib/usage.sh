@@ -28,7 +28,7 @@ fetch_provider_usage() {
                 printf '%s|\n' "$key" > "$out_file"
                 return
             fi
-            local resp result st cur tot color
+            local resp result st tot color
             resp=$(curl -s -m 3 -H "Authorization: Bearer $token" \
                 "https://api.deepseek.com/user/balance" 2>/dev/null) || resp=""
             result=$(echo "$resp" | python3 -c "
@@ -50,11 +50,10 @@ except Exception:
 " 2>/dev/null)
             if [[ "$result" == *"|"* ]]; then
                 st=$(echo "$result" | cut -d'|' -f1)
-                cur=$(echo "$result" | cut -d'|' -f2)
                 tot=$(echo "$result" | cut -d'|' -f3)
                 if [[ "$tot" != "0" && -n "$tot" ]]; then
                     [[ "$st" == "✓" ]] && color=$'\033[0;32m' || color=$'\033[0;33m'
-                    printf "%s|%s🐋 DS: %s %s\033[0m\n" "$key" "$color" "$tot" "$cur" > "$out_file"
+                    printf "%s|%s🐋 DS: ￥%s\033[0m\n" "$key" "$color" "$tot" > "$out_file"
                 else
                     printf "%s|\033[0;33m🐋 DS: N/A\033[0m\n" "$key" > "$out_file"
                 fi
@@ -122,12 +121,12 @@ except Exception:
                 cc=$(echo "$result" | cut -d'|' -f1)
                 display=$(echo "$result" | cut -d'|' -f2-)
                 if [[ -n "$display" ]]; then
-                    printf "%s|\033[0;%sm🧠 GLM: %s\033[0m\n" "$key" "$cc" "$display" > "$out_file"
+                    printf "%s|\033[0;%sm🔮 GLM: %s\033[0m\n" "$key" "$cc" "$display" > "$out_file"
                 else
-                    printf "%s|\033[0;33m🧠 GLM: N/A\033[0m\n" "$key" > "$out_file"
+                    printf "%s|\033[0;33m🔮 GLM: N/A\033[0m\n" "$key" > "$out_file"
                 fi
             else
-                printf "%s|\033[0;33m🧠 GLM: N/A\033[0m\n" "$key" > "$out_file"
+                printf "%s|\033[0;33m🔮 GLM: N/A\033[0m\n" "$key" > "$out_file"
             fi
             ;;
         mm)

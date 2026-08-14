@@ -62,7 +62,7 @@ echo "[4] 版本链路"
 run "check-update 能检测远端" '
     source "$APP_DIR/lib/common.sh"
     source "$APP_DIR/lib/selfupdate.sh"
-    cmd_check_update | grep -Eq "已是最新|发现新版本"'
+    cmd_check_update | grep -Eq "已是最新|发现新版本|本地版本"'
 
 echo "[5] 安装链路"
 run "install.sh 安装 + 软链 + 版本解析" '

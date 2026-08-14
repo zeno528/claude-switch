@@ -82,11 +82,21 @@ print_dash() {
 
 # box_line <content> <target_w> [gut]：gut 为内容左侧固定 2 列标记位
 box_line() {
-    local content="$1" target_w="$2" gut="${3:-  }" cw pad clean
+    local content="$1" max_w="$2" gut="${3:-  }" align="${4:-left}" cw pad lp rp gw clean
     clean=$(echo "$content" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
     cw=$(str_width "$clean")
-    pad=$((target_w - cw))
-    printf "  ${CYAN}│${NC} %s  %b%*s   ${CYAN}│${NC}\n" "$gut" "$content" $pad ""
+    gw=$(str_width "$gut")
+    if [[ "$align" == "center" ]]; then
+        # 行总宽 max_w+12（同边框行），content 在框内居中，rp 补齐保证闭合
+        lp=$(( (max_w + 4 - 2 * gw - cw) / 2 ))
+        [[ $lp -lt 0 ]] && lp=0
+        rp=$((max_w + 5 - gw - cw - lp))
+        printf "  ${CYAN}│${NC} %s %*s%b%*s ${CYAN}│${NC}\n" "$gut" $lp "" "$content" $rp ""
+    else
+        # 行总宽 = max_w + 12（与边框行一致：2 框外 + ╭ + dash(max_w+8) + ╮），内容左对齐
+        pad=$((max_w + 12 - (2 + 1 + 1 + gw + 1 + cw + 1 + 1)))
+        printf "  ${CYAN}│${NC} %s %b%*s ${CYAN}│${NC}\n" "$gut" "$content" $pad ""
+    fi
 }
 
 # 打开 profile 目录：WSL 用资源管理器，其他 Linux 打印路径

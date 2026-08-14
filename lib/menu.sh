@@ -64,7 +64,7 @@ show_menu() {
 
     # 圆角框（内容左移让位 2 列标记位，边框宽度相应 +2）
     echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
-    box_line "$title_line" "$max_w"
+    box_line "$title_line" "$max_w" "  " center
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
     for idx in "${!profile_lines[@]}"; do
         pline="${profile_lines[$idx]}"

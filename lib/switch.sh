@@ -102,14 +102,12 @@ PYEOF
     max_w=$(str_width "$success_line")
     ww=$(str_width "$warn_line")
     [[ $ww -gt $max_w ]] && max_w=$ww
-    (( max_w < 30 )) && max_w=30
-
     echo ""
-    echo -e "  ${CYAN}╭$(print_dash $((max_w + 6)))╮${NC}"
+    echo -e "  ${CYAN}╭$(print_dash $((max_w + 8)))╮${NC}"
     box_line "$success_line" "$max_w"
-    echo -e "  ${CYAN}├$(print_dash $((max_w + 6)))┤${NC}"
+    echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
     box_line "$warn_line" "$max_w"
-    echo -e "  ${CYAN}╰$(print_dash $((max_w + 6)))╯${NC}"
+    echo -e "  ${CYAN}╰$(print_dash $((max_w + 8)))╯${NC}"
     echo ""
 
     if $go_mode; then
