@@ -8,9 +8,6 @@ T="$(mktemp -d)"
 trap 'rm -rf "$T"' EXIT
 export HOME="$T/home" CSWITCH_HOME="$T/cswitch"
 
-# macOS 无 timeout 命令，用 perl 兜底
-command -v timeout >/dev/null 2>&1 || timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
-
 mkdir -p "$HOME/.claude/model-profiles" "$HOME/.claude"
 printf '%s' '{"env":{}}' > "$HOME/.claude/settings.json"
 printf '%s' '{"env":{"ANTHROPIC_MODEL":"deepseek"}}' > "$HOME/.claude/model-profiles/deepseek.json"
@@ -19,7 +16,9 @@ printf '%s' '{"env":{"ANTHROPIC_MODEL":"minimax"}}' > "$HOME/.claude/model-profi
 pass=0 fail=0
 run() { # run <desc> <bash 脚本>
     local desc="$1" script="$2"
-    if APP_DIR="$APP_DIR" T="$T" bash -c "$script" >/dev/null 2>&1; then
+    # macOS 无 timeout 命令，注入 perl 兜底（bash -c 子进程不继承函数定义）
+    local pre="command -v timeout >/dev/null 2>&1 || timeout() { perl -e 'alarm shift; exec @ARGV' \"\$@\"; }"
+    if APP_DIR="$APP_DIR" T="$T" bash -c "$pre; $script" >/dev/null 2>&1; then
         echo "  ✅ $desc"; pass=$((pass+1))
     else
         echo "  ❌ $desc"; fail=$((fail+1))
