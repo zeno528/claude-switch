@@ -1,6 +1,14 @@
+<p align="center">
+  <img alt="版本" src="https://img.shields.io/badge/版本-v0.1.0-orange">
+  <img alt="平台" src="https://img.shields.io/badge/平台-Linux%20%7C%20WSL2-blue">
+  <img alt="维护" src="https://img.shields.io/badge/维护-活跃-brightgreen">
+</p>
+
 # claude-switch
 
 一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、模板向导和自更新。
+
+适用于 **Linux** 和 **WSL2**（Windows Subsystem for Linux 2）。
 
 ## 安装
 
