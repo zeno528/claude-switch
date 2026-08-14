@@ -36,14 +36,14 @@ show_menu() {
 
     # 并行查询用量（DeepSeek / 智谱 / MiniMax）
     printf "  ⏳ 正在查询用量..."
-    local USAGE=()
+    local -A USAGE=()
     while IFS='|' read -r k disp; do
         [[ -z "$k" ]] && continue
         USAGE["$k"]="$disp"
     done < <(query_all_usage)
 
     # 反向映射：slug → display_string
-    local SLUG_USAGE=()
+    local -A SLUG_USAGE=()
     for slug in "${!PROVIDER_FOR_SLUG[@]}"; do
         SLUG_USAGE[$slug]="${USAGE[${PROVIDER_FOR_SLUG[$slug]}]:-}"
     done
@@ -77,7 +77,7 @@ show_menu() {
         if [[ -n "$u" ]]; then
             box_line "    └─ $u" $max_w
         else
-            box_line "    └─ 用量: —" $max_w
+            box_line "    └─ 🤖 用量: —" $max_w
         fi
     done
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
