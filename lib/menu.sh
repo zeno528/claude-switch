@@ -16,7 +16,7 @@ show_menu() {
     echo "  \$ $(basename "$0")"
 
     # 当前配置
-    local title_line="${BOLD}${YELLOW}cswitch v$(app_version)${NC}"
+    local title_line="${BOLD}${TITLE}cswitch v$(app_version)${NC}"
 
     # 收集 profile（带编号）
     local profile_names=() profile_lines=() profile_gutters=() idx=1
@@ -51,11 +51,11 @@ show_menu() {
     # 擦除进度提示行
     printf "\r\033[2K"
 
-    local hint_line="新建: ${BOLD}${GREEN}n${NC} 创建新模板  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
+    local hint_line="新建: ${BOLD}${GREEN}n${NC} 创建新配置  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
-        "用法: cswitch <name> [--go]" "示例: cswitch deepseek --go" "$hint_line")
+        "直接切换: cswitch <name> [--go]" "$hint_line")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
         w=$(str_width "$clean")
@@ -81,8 +81,7 @@ show_menu() {
         fi
     done
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
-    box_line "用法: cswitch <name> [--go]" $max_w
-    box_line "示例: cswitch deepseek --go" $max_w
+    box_line "直接切换: cswitch <name> [--go]" $max_w
     box_line "$hint_line" $max_w
     echo -e "  ${CYAN}╰$(print_dash $((max_w + 8)))╯${NC}"
 
@@ -100,7 +99,7 @@ show_menu() {
         exec claude
     fi
 
-    # n → 新建模板
+    # n → 新建配置
     if [[ "$choice" == "n" ]]; then
         create_new_profile
         back_to_menu

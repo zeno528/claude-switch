@@ -3,7 +3,7 @@
 # 用法: cswitch [profile_name] [--go]
 #        cswitch              → 交互菜单
 #        cswitch <name> [--go] → 切换到 profile，--go 切换后启动 claude
-#        cswitch new          → 新建模板向导
+#        cswitch new          → 新建配置向导
 #        cswitch version      → 显示版本
 #        cswitch check-update → 检查更新
 #        cswitch update       → 升级到最新版
@@ -22,7 +22,7 @@ show_help() {
     echo "用法:"
     echo "  cswitch                   交互菜单（查看/切换/用量/新建）"
     echo "  cswitch <name> [--go]     切换到 profile，--go 切换后启动 Claude"
-    echo "  cswitch new               新建模板向导"
+    echo "  cswitch new               新建配置向导"
     echo "  cswitch version           显示版本"
     echo "  cswitch check-update      检查更新"
     echo "  cswitch update            升级到最新版"

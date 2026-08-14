@@ -1,4 +1,4 @@
-# profile：读取、新建模板
+# profile：读取、新建配置
 
 # profile 描述统一显示切换后实际生效的模型 id：
 # ANTHROPIC_MODEL 优先，为空则用 ANTHROPIC_DEFAULT_SONNET_MODEL，再退回 name
@@ -30,14 +30,14 @@ except Exception:
 " 2>/dev/null
 }
 
-# 新建模板向导
+# 新建配置向导
 create_new_profile() {
     echo ""
 
     # 名称：输错当场提示并重试，不浪费后面两步输入；空输入取消
     local profile_file=""
     while true; do
-        read -p "  请输入模板名称: " name
+        read -p "  请输入配置名称: " name
 
         # 空输入取消
         if [[ -z "$name" ]]; then
@@ -55,7 +55,7 @@ create_new_profile() {
 
         # 校验：文件已存在
         if [[ -f "$profile_file" ]]; then
-            echo -e "  ${RED}❌ 模板已存在: $name，请换个名称${NC}"
+            echo -e "  ${RED}❌ 配置已存在: $name，请换个名称${NC}"
             continue
         fi
         break
