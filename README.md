@@ -1,7 +1,8 @@
 <p align="center">
   <img alt="版本" src="https://img.shields.io/badge/版本-v0.1.0-orange">
   <img alt="平台" src="https://img.shields.io/badge/平台-Linux%20%7C%20WSL2-blue">
-  <img alt="维护" src="https://img.shields.io/badge/维护-活跃-brightgreen">
+  <img alt="Stars" src="https://img.shields.io/github/stars/zeno528/cswitch?label=Stars">
+  <img alt="最后提交" src="https://img.shields.io/github/last-commit/zeno528/cswitch?label=最后提交">
 </p>
 
 # cswitch
