@@ -9,7 +9,8 @@
 #        claude-switch update       → 升级到最新版
 #        claude-switch uninstall    → 卸载
 
-APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# readlink -f 解析软链，保证经 ~/.local/bin 软链调用时 lib/ 定位正确
+APP_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
 for mod in common profile switch usage menu selfupdate; do
     source "$APP_DIR/lib/$mod.sh"
