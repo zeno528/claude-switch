@@ -90,6 +90,7 @@ show_menu() {
     printf '  选择配置 [1-%s] · %bg%b 启动 Claude · 回车取消: ' "$total" "$CYAN" "$NC"
     local choice
     read -r choice
+    choice="${choice,,}"
 
     # 空输入 → 取消
     [[ -z "$choice" ]] && exit 0
