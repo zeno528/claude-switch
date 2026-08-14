@@ -6,6 +6,7 @@ back_to_menu() {
     echo ""
     printf '  下一步 · %bg%b 启动 Claude · 回车返回菜单: ' "$GREEN" "$NC"
     read -r ans
+    ans="${ans,,}"
     [[ "$ans" == "g" ]] && exec claude
     exec "$0"
 }

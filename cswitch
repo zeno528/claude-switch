@@ -30,11 +30,12 @@ show_help() {
 }
 
 main() {
-    if [[ $# -eq 0 || "$1" == "--go" ]]; then
+    local cmd="${1,,}"
+    if [[ $# -eq 0 || "$cmd" == "--go" ]]; then
         show_menu
         return
     fi
-    case "$1" in
+    case "$cmd" in
         version|-v|--version) cmd_version ;;
         check-update|check) cmd_check_update ;;
         update|upgrade|self-update) cmd_update ;;
@@ -43,7 +44,7 @@ main() {
         help|-h|--help) show_help ;;
         *)
             local go_mode=false
-            [[ "$2" == "--go" ]] && go_mode=true
+            [[ "${2,,}" == "--go" ]] && go_mode=true
             do_switch "$1" "$go_mode" false
             ;;
     esac

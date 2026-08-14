@@ -3,18 +3,28 @@
 # do_switch <profile_name> [go_mode] [interactive]
 do_switch() {
     local profile_name="$1" go_mode="${2:-false}" interactive="${3:-false}"
-    local profile_file="$PROFILES_DIR/${profile_name}.json"
+    local profile_file="" pname
 
-    # 检查 profile 是否存在
-    if [[ ! -f "$profile_file" ]]; then
+    # 大小写不敏感查找 profile（统一用文件真实名）
+    for f in "$PROFILES_DIR"/*.json; do
+        [[ -f "$f" ]] || continue
+        pname=$(basename "$f" .json)
+        if [[ "${pname,,}" == "${profile_name,,}" ]]; then
+            profile_file="$f"
+            profile_name="$pname"
+            break
+        fi
+    done
+
+    if [[ -z "$profile_file" ]]; then
         echo "❌ 找不到 profile: $profile_name"
         echo "   可用 profile:"
         for f in "$PROFILES_DIR"/*.json; do
             [[ -f "$f" ]] || continue
-            pname=$(basename "$f" .json)
+            avail=$(basename "$f" .json)
             pdesc=$(profile_model "$f")
-            [[ -z "$pdesc" ]] && pdesc="$pname"
-            echo "   - $pname — $pdesc"
+            [[ -z "$pdesc" ]] && pdesc="$avail"
+            echo "   - $avail — $pdesc"
         done
         if $interactive; then back_to_menu; fi
         exit 1
