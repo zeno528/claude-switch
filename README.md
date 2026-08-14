@@ -1,10 +1,10 @@
+<h1 align="center" style="color:#3faec2;font-weight:bold">cswitch</h1>
+
 <p align="center">
-  <img alt="版本" src="https://img.shields.io/badge/版本-v1.0.0-orange">
+  <img alt="版本" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fzeno528%2Fcswitch%2Fmain%2FVERSION">
   <img alt="平台" src="https://img.shields.io/badge/平台-Linux%20%7C%20WSL2-blue">
   <img alt="Shell" src="https://img.shields.io/badge/Shell-Bash-89e051">
 </p>
-
-<h1 style="color:#3faec2;font-weight:bold">cswitch</h1>
 
 一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、配置向导和自更新。
 

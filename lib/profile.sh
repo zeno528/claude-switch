@@ -41,13 +41,13 @@ create_new_profile() {
 
         # 空输入取消
         if [[ -z "$name" ]]; then
-            echo "  ⚪ 已取消"
+            say "⚪" "已取消"
             return
         fi
 
         # 校验：只能用字母、数字、下划线、连字符
         if [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-            echo -e "  ${RED}❌ 名称只能包含字母、数字、下划线、连字符，请重新输入${NC}"
+            say "❌" "${RED}名称只能包含字母、数字、下划线、连字符，请重新输入${NC}"
             continue
         fi
 
@@ -55,7 +55,7 @@ create_new_profile() {
 
         # 校验：文件已存在
         if [[ -f "$profile_file" ]]; then
-            echo -e "  ${RED}❌ 配置已存在: $name，请换个名称${NC}"
+            say "❌" "${RED}配置已存在: $name，请换个名称${NC}"
             continue
         fi
         break
@@ -103,6 +103,6 @@ with open('$profile_file', 'w') as f:
     json.dump(d, f, indent=2, ensure_ascii=False)
 "
 
-    echo -e "  ${GREEN}✅ 已创建: $profile_file${NC}"
+    say "✅" "${GREEN}已创建: $profile_file${NC}"
     open_profiles_dir
 }

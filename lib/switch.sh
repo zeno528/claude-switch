@@ -17,14 +17,14 @@ do_switch() {
     done
 
     if [[ -z "$profile_file" ]]; then
-        echo "❌ 找不到 profile: $profile_name"
-        echo "   可用 profile:"
+        say "❌" "找不到 profile: $profile_name"
+        say "" "可用 profile:"
         for f in "$PROFILES_DIR"/*.json; do
             [[ -f "$f" ]] || continue
             avail=$(basename "$f" .json)
             pdesc=$(profile_model "$f")
             [[ -z "$pdesc" ]] && pdesc="$avail"
-            echo "   - $avail — $pdesc"
+            say "" "- $avail — $pdesc"
         done
         if $interactive; then back_to_menu; fi
         exit 1
@@ -32,7 +32,7 @@ do_switch() {
 
     # 检查 settings.json 是否存在
     if [[ ! -f "$SETTINGS_FILE" ]]; then
-        echo "❌ 找不到 settings.json: $SETTINGS_FILE"
+        say "❌" "找不到 settings.json: $SETTINGS_FILE"
         exit 1
     fi
 
@@ -78,7 +78,7 @@ print(json.dumps(settings['env'], indent=2, ensure_ascii=False))
 PYEOF
 
     if [[ $? -ne 0 ]]; then
-        echo "❌ 更新 settings.json 失败，已恢复备份"
+        say "❌" "更新 settings.json 失败，已恢复备份"
         mv "${SETTINGS_FILE}.bak" "$SETTINGS_FILE"
         exit 1
     fi
@@ -111,7 +111,7 @@ PYEOF
     echo ""
 
     if $go_mode; then
-        echo "🚀 启动 Claude Code..."
+        say "🚀" "启动 Claude Code..."
         echo ""
         claude
     fi

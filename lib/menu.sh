@@ -4,7 +4,7 @@
 back_to_menu() {
     local ans
     echo ""
-    printf '  下一步 · %bg%b 启动 Claude · 回车返回菜单: ' "$GREEN" "$NC"
+    printf '     下一步 · %bg%b 启动 Claude · 回车返回菜单: ' "$GREEN" "$NC"
     read -r ans
     ans="${ans,,}"
     [[ "$ans" == "g" ]] && exec claude
@@ -88,7 +88,7 @@ show_menu() {
 
     # 交互选择
     echo ""
-    printf '  选择配置 [1-%s] · %bg%b 启动 Claude · 回车取消: ' "$total" "$CYAN" "$NC"
+    printf '     选择配置 [1-%s] · %bg%b 启动 Claude · 回车取消: ' "$total" "$CYAN" "$NC"
     local choice
     read -r choice
     choice="${choice,,}"

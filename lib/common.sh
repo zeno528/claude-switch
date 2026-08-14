@@ -20,14 +20,32 @@ TITLE='\033[38;2;63;174;194m'  # #3faec2
 BOLD='\033[1m'
 NC='\033[0m'
 
+# 全局统一输出：图标固定占 2 列，文本从同一列开始对齐
+# 用法: say "✅" "文本"（带图标） / say "" "文本"（无图标）
+say() {
+    local icon="$1" text="$2"
+    if [[ -n "$icon" ]]; then
+        printf '%b\n' "  $icon $text"
+    else
+        printf '%b\n' "     $text"
+    fi
+}
+
 # 本地版本（读取 VERSION 文件，缺失按 0.0.0）
 app_version() {
+    local v
+    v=$(python3 -c "import json;print(json.load(open('$APP_DIR/VERSION'))['message'])" 2>/dev/null)
+    [[ -n "$v" ]] && { echo "$v"; return; }
     cat "$APP_DIR/VERSION" 2>/dev/null || echo "0.0.0"
 }
 
 # 远端版本（GitHub raw VERSION）
 remote_version() {
-    curl -fsSL -m 8 "$RAW_BASE/VERSION" 2>/dev/null | tr -d '[:space:]'
+    curl -fsSL -m 8 "$RAW_BASE/VERSION" 2>/dev/null | python3 -c "
+import json, sys
+d = sys.stdin.read().strip()
+print(json.loads(d)['message'] if d.startswith('{') else d)
+" 2>/dev/null
 }
 
 # $1 > $2
