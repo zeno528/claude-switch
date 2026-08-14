@@ -39,13 +39,18 @@ app_version() {
     cat "$APP_DIR/VERSION" 2>/dev/null || echo "0.0.0"
 }
 
-# 远端版本（GitHub raw VERSION）
+# 远端版本：优先 GitHub API（实时，避开 raw CDN 缓存延迟），失败退回 raw
 remote_version() {
-    curl -fsSL -m 8 "$RAW_BASE/VERSION" 2>/dev/null | python3 -c "
+    local v
+    v=$(curl -fsSL -m 8 "https://api.github.com/repos/$REPO/contents/VERSION" 2>/dev/null \
+        | python3 -c "import json,sys,base64; print(base64.b64decode(json.load(sys.stdin)['content']).decode(), end='')" 2>/dev/null)
+    [[ -z "$v" ]] && v=$(curl -fsSL -m 8 "$RAW_BASE/VERSION" 2>/dev/null)
+    [[ -z "$v" ]] && return 1
+    python3 -c "
 import json, sys
-d = sys.stdin.read().strip()
-print(json.loads(d)['message'] if d.startswith('{') else d)
-" 2>/dev/null
+s = sys.stdin.read().strip()
+print(json.loads(s)['message'] if s.startswith('{') else s)
+" <<< "$v" 2>/dev/null
 }
 
 # $1 > $2
