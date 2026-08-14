@@ -11,7 +11,7 @@
   <img alt="License" src="https://img.shields.io/github/license/zeno528/cswitch">
 </p>
 
-**cswitch** 是一个命令行脚本，一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、配置向导、Claude Code 安装与日常更新，以及脚本自更新。
+**cswitch** 是一个命令行脚本，一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、配置向导、**Claude Code 安装与日常更新**，以及脚本自更新。
 
 适用于 **Linux**、**macOS** 和 **WSL2**（Windows Subsystem for Linux 2），要求 `bash 3.2+`（macOS 自带）、`python3`、`curl`。
 
@@ -87,6 +87,16 @@ cd cswitch
 ```
 
 源码运行同样支持全部子命令，只是 `update` 需要安装目录结构（正常安装后使用）。
+
+## 反馈与建议
+
+欢迎通过 [GitHub Issues](https://github.com/zeno528/cswitch/issues) 提交 bug 反馈、功能建议或使用疑问。
+
+提 bug 时请附上：
+
+- 系统环境（Linux / macOS / WSL2）
+- `cswitch version` 与 `claude --version` 的输出
+- 复现步骤和完整报错信息
 
 ## License
 
