@@ -10,10 +10,10 @@
 #        cswitch update       → 升级到最新版
 #        cswitch uninstall    → 卸载
 
-# readlink -f 解析软链，保证经 ~/.local/bin 软链调用时 lib/ 定位正确
-APP_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+# 解析软链定位安装目录（bash 3.2 / macOS 兼容：readlink -f 不可用，用 python）
+APP_DIR="$(python3 -c "import os,sys; print(os.path.dirname(os.path.realpath(sys.argv[1])))" "${BASH_SOURCE[0]}")"
 
-for mod in common profile switch usage menu selfupdate; do
+for mod in common profile switch usage menu selfupdate claude-upgrade; do
     source "$APP_DIR/lib/$mod.sh"
 done
 
@@ -27,11 +27,13 @@ show_help() {
     echo "  cswitch version           显示版本"
     echo "  cswitch check-update      检查更新"
     echo "  cswitch update            升级到最新版"
+    echo "  cswitch claude [--info|-y|-f]  安装/更新 Claude Code"
     echo "  cswitch uninstall         卸载"
 }
 
 main() {
-    local cmd="${1,,}"
+    local cmd
+    cmd=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
     if [[ $# -eq 0 || "$cmd" == "--go" ]]; then
         show_menu
         return
@@ -40,12 +42,13 @@ main() {
         version|-v|--version) cmd_version ;;
         check-update|check) cmd_check_update ;;
         update|upgrade|self-update) cmd_update ;;
+        claude|cc) cmd_claude_upgrade "${@:2}" ;;
         uninstall) cmd_uninstall ;;
         new|create) create_new_profile ;;
         help|-h|--help) show_help ;;
         *)
             local go_mode=false
-            [[ "${2,,}" == "--go" ]] && go_mode=true
+            [[ "$(printf '%s' "$2" | tr '[:upper:]' '[:lower:]')" == "--go" ]] && go_mode=true
             do_switch "$1" "$go_mode" false
             ;;
     esac

@@ -7,7 +7,7 @@ back_to_menu() {
     echo ""
     printf '     下一步 · %bg%b 启动 Claude · 回车返回菜单: ' "$GREEN" "$NC"
     read -r ans
-    ans="${ans,,}"
+    ans=$(printf '%s' "$ans" | tr '[:upper:]' '[:lower:]')
     [[ "$ans" == "g" ]] && exec claude
     exec "$0"
 }
@@ -39,22 +39,16 @@ show_menu() {
 
     # 并行查询用量（DeepSeek / 智谱 / MiniMax）
     printf "  ⏳ 正在查询用量..."
-    local -A USAGE=()
+    local usage_lines=()
     while IFS='|' read -r k disp; do
         [[ -z "$k" ]] && continue
-        USAGE["$k"]="$disp"
+        usage_lines+=("$k|$disp")
     done < <(query_all_usage)
-
-    # 反向映射：slug → display_string
-    local -A SLUG_USAGE=()
-    for slug in "${!PROVIDER_FOR_SLUG[@]}"; do
-        SLUG_USAGE[$slug]="${USAGE[${PROVIDER_FOR_SLUG[$slug]}]:-}"
-    done
 
     # 擦除进度提示行
     printf "\r\033[2K"
 
-    local hint_line="新建: ${BOLD}${GREEN}n${NC} 创建新配置  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
+    local hint_line="新建: ${BOLD}${GREEN}n${NC}  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  Claude: ${BOLD}${GREEN}c${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$title_line" "${profile_lines[@]}" \
@@ -76,7 +70,10 @@ show_menu() {
         pline="${profile_lines[$idx]}"
         box_line "$pline" "$max_w" "${profile_gutters[$idx]}"
         slug="${profile_names[$idx]}"
-        u="${SLUG_USAGE[$slug]:-}"
+        u=""
+        for line in "${usage_lines[@]}"; do
+            [[ "$line" == "$(slug_provider "$slug")|"* ]] && u="${line#*|}" && break
+        done
         if [[ -n "$u" ]]; then
             box_line "    └─ $u" "$max_w"
         else
@@ -93,7 +90,7 @@ show_menu() {
     printf '     选择配置 [1-%s] · %bg%b 启动 Claude · 回车取消: ' "$total" "$CYAN" "$NC"
     local choice
     read -r choice
-    choice="${choice,,}"
+    choice=$(printf '%s' "$choice" | tr '[:upper:]' '[:lower:]')
 
     # 空输入 → 取消
     [[ -z "$choice" ]] && exit 0
@@ -125,6 +122,12 @@ show_menu() {
     if [[ "$choice" == "x" ]]; then
         cmd_uninstall
         exit 0
+    fi
+
+    # c → 安装/更新 Claude Code
+    if [[ "$choice" == "c" ]]; then
+        cmd_claude_upgrade
+        back_to_menu
     fi
 
     # 非数字 → 也当成 profile 名直接切换

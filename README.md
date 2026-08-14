@@ -6,13 +6,14 @@
 
 <p align="center">
   <img alt="Version" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fzeno528%2Fcswitch%2Fmain%2FVERSION">
-  <img alt="Platform" src="https://img.shields.io/badge/Platform-Linux%20%7C%20WSL2-blue">
+  <img alt="Platform" src="https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20WSL2-blue">
   <img alt="Shell" src="https://img.shields.io/badge/Shell-Bash-89e051">
+  <img alt="License" src="https://img.shields.io/github/license/zeno528/cswitch">
 </p>
 
-一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、配置向导和自更新。
+cswitch 是一个命令行脚本，一键切换 Claude Code 模型配置（DeepSeek / 智谱 / MiniMax 等），支持交互菜单、用量查询、配置向导、Claude Code 安装与日常更新，以及脚本自更新。
 
-适用于 **Linux** 和 **WSL2**（Windows Subsystem for Linux 2）。
+适用于 **Linux**、**macOS** 和 **WSL2**（Windows Subsystem for Linux 2），要求 `bash 3.2+`（macOS 自带）、`python3`、`curl`。
 
 ## 安装
 
@@ -26,6 +27,16 @@ curl -fsSL https://raw.githubusercontent.com/zeno528/cswitch/main/install.sh | b
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 ```
 
+macOS 默认 shell 是 zsh 的话，改用：
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+<p align="center">
+  <img src="assets/menu.png" alt="cswitch 菜单界面">
+</p>
+
 ## 用法
 
 | 命令 | 说明 |
@@ -36,17 +47,14 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 | `cswitch version` | 显示版本 |
 | `cswitch check-update` | 检查更新 |
 | `cswitch update` | 升级到最新版 |
+| `cswitch claude` | 安装/更新 Claude Code（`--info` 查看状态，`-f` 强制升级） |
 | `cswitch uninstall` | 卸载 |
-
-<p align="center">
-  <img src="assets/menu.png" alt="cswitch 菜单界面">
-</p>
 
 profile 存放在 `~/.claude/model-profiles/`，切换时把 profile 的 `env` 合并进 `~/.claude/settings.json`（带备份回滚），并记录当前配置到 `~/.claude/.current-model-profile`。
 
 ## 更新机制
 
-本地 `VERSION` 文件与 GitHub 远端 `VERSION` 比对，`sort -V` 判定版本；有新版时下载 GitHub codeload tarball，备份旧安装目录后替换，不需要目标机器装 git。
+本地 `VERSION` 文件与 GitHub 远端 `VERSION` 比对，Python 逐段比较版本号；有新版时下载 GitHub codeload tarball，备份旧安装目录后替换，不需要目标机器装 git。
 
 ## 目录结构
 
@@ -74,3 +82,7 @@ cd cswitch
 ```
 
 源码运行同样支持全部子命令，只是 `update` 需要安装目录结构（正常安装后使用）。
+
+## License
+
+[MIT](LICENSE)

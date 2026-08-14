@@ -57,7 +57,13 @@ print(json.loads(s)['message'] if s.startswith('{') else s)
 
 # $1 > $2
 version_gt() {
-    [[ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" != "$1" ]]
+    # bash 3.2 / macOS 兼容：sort -V 不可用，用 python 逐段比较
+    python3 -c "
+import sys
+a = [int(x) for x in sys.argv[1].split('.')]
+b = [int(x) for x in sys.argv[2].split('.')]
+sys.exit(0 if a > b else 1)
+" "$1" "$2"
 }
 
 # 终端显示宽度（CJK 按 2 列）

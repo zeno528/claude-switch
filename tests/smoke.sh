@@ -8,6 +8,9 @@ T="$(mktemp -d)"
 trap 'rm -rf "$T"' EXIT
 export HOME="$T/home" CSWITCH_HOME="$T/cswitch"
 
+# macOS 无 timeout 命令，用 perl 兜底
+command -v timeout >/dev/null 2>&1 || timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+
 mkdir -p "$HOME/.claude/model-profiles" "$HOME/.claude"
 printf '%s' '{"env":{}}' > "$HOME/.claude/settings.json"
 printf '%s' '{"env":{"ANTHROPIC_MODEL":"deepseek"}}' > "$HOME/.claude/model-profiles/deepseek.json"
@@ -52,6 +55,7 @@ echo "[3] 新建配置向导"
 run "向导生成 testcfg.json" '
     source "$APP_DIR/lib/common.sh"
     source "$APP_DIR/lib/profile.sh"
+    open_profiles_dir() { :; }
     printf "testcfg\nhttps://api.example.com\nkey123\nmodel-x\n\n" | create_new_profile
     [ -f "$HOME/.claude/model-profiles/testcfg.json" ]'
 

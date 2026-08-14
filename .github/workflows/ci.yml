@@ -36,3 +36,19 @@ jobs:
         run: |
           chmod +x tests/smoke.sh
           ./tests/smoke.sh
+
+  mac-compat:
+    runs-on: macos-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7.0.1
+      - name: 安装 shellcheck
+        run: brew install shellcheck
+      - name: bash 3.2 语法检查（macOS 自带 /bin/bash）
+        run: /bin/bash -n cswitch install.sh lib/*.sh tests/smoke.sh
+      - name: shellcheck
+        run: shellcheck -x cswitch install.sh lib/*.sh
+      - name: 功能冒烟测试（真实 bash 3.2）
+        run: |
+          chmod +x tests/smoke.sh
+          ./tests/smoke.sh

@@ -1,12 +1,15 @@
 # shellcheck shell=bash
 # 用量查询：DeepSeek / 智谱 / MiniMax
 
-# slug → provider 键名映射
-declare -A PROVIDER_FOR_SLUG=(
-    [deepseek]=ds
-    [zhipu]=glm
-    [minimax]=mm
-)
+# slug → provider 键名映射（bash 3.2 兼容：固定列表 + case，不用关联数组）
+SLUGS="deepseek zhipu minimax"
+slug_provider() {
+    case "$1" in
+        deepseek) echo ds ;;
+        zhipu) echo glm ;;
+        minimax) echo mm ;;
+    esac
+}
 
 # 调用单个 provider 的用量 API，结果写入 $4（"key|display" 格式）
 # 用法: fetch_provider_usage <key> <base_url> <token> <out_file>
@@ -207,15 +210,15 @@ except Exception:
 }
 
 # 并行查询全部 provider 用量，输出 slug → display 的关联数组到 stdout（key|display 每行）
-# 调用方用 declare -A 承接
+# 输出 key|display 行，调用方按行承接
 query_all_usage() {
     local tmpdir
     tmpdir=$(mktemp -d)
     trap 'rm -rf "$tmpdir"' EXIT
 
     # 为每个匹配的 profile 启动一个后台 curl
-    for slug in "${!PROVIDER_FOR_SLUG[@]}"; do
-        prov="${PROVIDER_FOR_SLUG[$slug]}"
+    for slug in $SLUGS; do
+        prov=$(slug_provider "$slug")
         [[ -f "$PROFILES_DIR/$slug.json" ]] || continue
         ut=$(read_profile_url_token "$PROFILES_DIR/$slug.json")
         base_url="${ut%%|*}"

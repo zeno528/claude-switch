@@ -5,12 +5,15 @@
 do_switch() {
     local profile_name="$1" go_mode="${2:-false}" interactive="${3:-false}"
     local profile_file="" pname
+    local lower_pname lower_input
 
     # 大小写不敏感查找 profile（统一用文件真实名）
     for f in "$PROFILES_DIR"/*.json; do
         [[ -f "$f" ]] || continue
         pname=$(basename "$f" .json)
-        if [[ "${pname,,}" == "${profile_name,,}" ]]; then
+        lower_pname=$(printf '%s' "$pname" | tr '[:upper:]' '[:lower:]')
+        lower_input=$(printf '%s' "$profile_name" | tr '[:upper:]' '[:lower:]')
+        if [[ "$lower_pname" == "$lower_input" ]]; then
             profile_file="$f"
             profile_name="$pname"
             break
