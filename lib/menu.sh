@@ -18,8 +18,9 @@ show_menu() {
     echo "  \$ $(basename "$0")"
 
     # 标题卡内容（嵌入边框左上角 + 版本号行）
-    local ver_line ver_clean
+    local ver_line repo_line ver_clean
     ver_line=" 版本  ${GREEN}v$(app_version)${NC}"
+    repo_line=" https://github.com/zeno528/cswitch"
     local title_header="─ 🏷️ cswitch "
 
     # 收集 profile（带编号）
@@ -54,7 +55,7 @@ show_menu() {
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$ver_line" "${profile_lines[@]}" \
-        "$hint_line1" "$hint_line2")
+        "$repo_line" "$hint_line1" "$hint_line2")
     for line in "${all_lines[@]}"; do
         clean=$(echo "$line" | sed -e 's/\\033\[[0-9;]*m//g' -e 's/\x1b\[[0-9;]*m//g')
         w=$(str_width "$clean")
@@ -64,8 +65,8 @@ show_menu() {
 
     echo ""
 
-    # 标题卡：╭─ 🏷️ cswitch ──╮ / │ 版本  v1.0.6 │ / ├──┤
-    local tw fill ver_pad spaces
+    # 标题卡：╭─ 🏷️ cswitch ──╮ / │ 版本  v1.0.6 │ / │ 仓库地址 │ / ├──┤
+    local tw fill ver_pad repo_pad spaces
     tw=$((max_w + 12))
     fill=""
     for ((i = 0; i < tw - 4 - $(str_width "$title_header"); i++)); do fill+="─"; done
@@ -75,6 +76,10 @@ show_menu() {
     spaces=""
     for ((i = 0; i < ver_pad; i++)); do spaces+=" "; done
     echo -e "  ${CYAN}│${NC} ${ver_line}${spaces} ${CYAN}│${NC}"
+    repo_pad=$((tw - 6 - $(str_width "$repo_line")))
+    spaces=""
+    for ((i = 0; i < repo_pad; i++)); do spaces+=" "; done
+    echo -e "  ${CYAN}│${NC} ${repo_line}${spaces} ${CYAN}│${NC}"
     echo -e "  ${CYAN}├$(print_dash $((max_w + 8)))┤${NC}"
 
     # profile 列表
