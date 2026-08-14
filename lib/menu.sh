@@ -58,7 +58,7 @@ show_menu() {
     # 擦除进度提示行
     printf "\r\033[2K"
 
-    local hint_line="新建: 输入 ${BOLD}${GREEN}n${NC} 创建新模板  |  打开目录: 输入 ${BOLD}${GREEN}o${NC}  |  升级: 输入 ${BOLD}${GREEN}u${NC}  |  卸载: 输入 ${BOLD}${GREEN}x${NC}"
+    local hint_line="新建: ${BOLD}${GREEN}n${NC} 创建新模板  |  打开目录: ${BOLD}${GREEN}o${NC}  |  升级: ${BOLD}${GREEN}u${NC}  |  卸载: ${BOLD}${GREEN}x${NC}"
 
     # 计算最大显示宽度（含提示行，框宽自适应所有内容）
     local max_w=0 all_lines=("$title_line" "$current_line" "${profile_lines[@]}" \
